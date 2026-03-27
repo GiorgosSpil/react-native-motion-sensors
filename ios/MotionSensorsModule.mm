@@ -1,16 +1,12 @@
-#import <React/RCTEventEmitter.h>
-#import <React/RCTBridgeModule.h>
+#import "MotionSensorsModule.h"
 #import <CoreMotion/CoreMotion.h>
 
-// Generated Swift header — supports both framework and non-framework builds.
+// Generated Swift header -- supports both framework and non-framework builds.
 #if __has_include("react_native_motion_sensors-Swift.h")
 #import "react_native_motion_sensors-Swift.h"
 #else
 #import <react_native_motion_sensors/react_native_motion_sensors-Swift.h>
 #endif
-
-@interface MotionSensorsModule : RCTEventEmitter <RCTBridgeModule>
-@end
 
 @implementation MotionSensorsModule {
     CMMotionManager *_motionManager;
@@ -19,14 +15,16 @@
     NSTimeInterval _lastEmitTime;
 }
 
-RCT_EXPORT_MODULE(MotionSensors)
-
 // ---------------------------------------------------------------------------
-// RCTEventEmitter
+// TurboModule
 // ---------------------------------------------------------------------------
 
-- (NSArray<NSString *> *)supportedEvents {
-    return @[@"onMotionData"];
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
+    return std::make_shared<facebook::react::NativeMotionSensorsSpecJSI>(params);
+}
+
++ (NSString *)moduleName {
+    return @"MotionSensors";
 }
 
 + (BOOL)requiresMainQueueSetup {
@@ -55,7 +53,7 @@ RCT_EXPORT_MODULE(MotionSensors)
 // JS API
 // ---------------------------------------------------------------------------
 
-RCT_EXPORT_METHOD(start:(double)updateIntervalMs) {
+- (void)start:(double)updateIntervalMs {
     if (updateIntervalMs > 0) {
         _throttleIntervalSec = updateIntervalMs / 1000.0;
     } else {
@@ -110,13 +108,12 @@ RCT_EXPORT_METHOD(start:(double)updateIntervalMs) {
     }];
 }
 
-RCT_EXPORT_METHOD(stop) {
+- (void)stop {
     [_motionManager stopDeviceMotionUpdates];
     _lastEmitTime = 0.0;
 }
 
-RCT_EXPORT_METHOD(isAvailable:(RCTPromiseResolveBlock)resolve
-                      rejecter:(RCTPromiseRejectBlock)reject) {
+- (void)isAvailable:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
     resolve(@(_motionManager.isDeviceMotionAvailable));
 }
 
@@ -124,12 +121,20 @@ RCT_EXPORT_METHOD(isAvailable:(RCTPromiseResolveBlock)resolve
 // NativeEventEmitter stubs (required by the JS NativeEventEmitter wrapper)
 // ---------------------------------------------------------------------------
 
-RCT_EXPORT_METHOD(addListener:(NSString *)eventName) {
-    // no-op — handled by RCTEventEmitter superclass
+- (void)addListener:(NSString *)eventName {
+    // no-op -- event infrastructure handled by SpecBase superclass
 }
 
-RCT_EXPORT_METHOD(removeListeners:(double)count) {
-    // no-op — handled by RCTEventEmitter superclass
+- (void)removeListeners:(double)count {
+    // no-op -- event infrastructure handled by SpecBase superclass
+}
+
+// ---------------------------------------------------------------------------
+// supportedEvents (required by RCTEventEmitter for sendEventWithName)
+// ---------------------------------------------------------------------------
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[@"onMotionData"];
 }
 
 @end

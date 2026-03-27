@@ -8,15 +8,14 @@ import android.hardware.SensorManager
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
-class MotionSensorsModule(reactContext: ReactApplicationContext) :
-    ReactContextBaseJavaModule(reactContext), SensorEventListener {
+class MotionSensorsModule(
+    private val reactContext: ReactApplicationContext
+) : NativeMotionSensorsSpec(reactContext), SensorEventListener {
 
     companion object {
-        private const val MODULE_NAME = "MotionSensors"
+        const val NAME = "MotionSensors"
         private const val EVENT_NAME = "onMotionData"
         private const val DEFAULT_INTERVAL_MS = 33L
     }
@@ -41,17 +40,16 @@ class MotionSensorsModule(reactContext: ReactApplicationContext) :
     private var throttleIntervalMs: Long = DEFAULT_INTERVAL_MS
 
     // ---------------------------------------------------------------------------
-    // ReactContextBaseJavaModule
+    // TurboModule
     // ---------------------------------------------------------------------------
 
-    override fun getName(): String = MODULE_NAME
+    override fun getName(): String = NAME
 
     // ---------------------------------------------------------------------------
     // Public API (called from JS)
     // ---------------------------------------------------------------------------
 
-    @ReactMethod
-    fun start(updateIntervalMs: Double) {
+    override fun start(updateIntervalMs: Double) {
         throttleIntervalMs = if (updateIntervalMs > 0) updateIntervalMs.toLong() else DEFAULT_INTERVAL_MS
         lastEmitMs = 0L
 
@@ -63,26 +61,22 @@ class MotionSensorsModule(reactContext: ReactApplicationContext) :
         }
     }
 
-    @ReactMethod
-    fun stop() {
+    override fun stop() {
         sensorManager.unregisterListener(this)
     }
 
-    @ReactMethod
-    fun isAvailable(promise: Promise) {
+    override fun isAvailable(promise: Promise) {
         val available = linearAccelSensor != null && gameRotationSensor != null
         promise.resolve(available)
     }
 
-    /** Required by NativeEventEmitter on the JS side — no-op. */
-    @ReactMethod
-    fun addListener(eventName: String) {
+    /** Required by NativeEventEmitter on the JS side -- no-op. */
+    override fun addListener(eventName: String) {
         // no-op
     }
 
-    /** Required by NativeEventEmitter on the JS side — no-op. */
-    @ReactMethod
-    fun removeListeners(count: Double) {
+    /** Required by NativeEventEmitter on the JS side -- no-op. */
+    override fun removeListeners(count: Double) {
         // no-op
     }
 

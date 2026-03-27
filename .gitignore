@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+android/build/
+ios/build/
+*.xcworkspace
+Pods/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+
+# npm
+*.tgz
