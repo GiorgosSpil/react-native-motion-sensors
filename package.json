@@ -1,0 +1,30 @@
+{
+  "name": "react-native-motion-sensors",
+  "version": "0.1.0",
+  "description": "React Native Turbo Module for processed device motion sensor data (accelerometer, gyroscope)",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/user/react-native-motion-sensors"
+  },
+  "license": "MIT",
+  "keywords": ["react-native", "turbo-module", "sensors", "accelerometer", "gyroscope", "motion", "imu"],
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.76.0"
+  },
+  "devDependencies": {
+    "react": "19.1.1",
+    "react-native": "0.82.1",
+    "typescript": "^5.8.3"
+  },
+  "codegenConfig": {
+    "name": "MotionSensorsSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.motionsensors"
+    }
+  }
+}
