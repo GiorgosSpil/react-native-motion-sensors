@@ -6,7 +6,7 @@
   "types": "src/index.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/react-native-motion-sensors"
+    "url": "https://github.com/GiorgosSpil/react-native-motion-sensors"
   },
   "license": "MIT",
   "keywords": ["react-native", "turbo-module", "sensors", "accelerometer", "gyroscope", "motion", "imu"],
