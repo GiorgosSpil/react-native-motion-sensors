@@ -15,16 +15,14 @@
     NSTimeInterval _lastEmitTime;
 }
 
+RCT_EXPORT_MODULE(MotionSensors)
+
 // ---------------------------------------------------------------------------
 // TurboModule
 // ---------------------------------------------------------------------------
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:(const facebook::react::ObjCTurboModule::InitParams &)params {
     return std::make_shared<facebook::react::NativeMotionSensorsSpecJSI>(params);
-}
-
-+ (NSString *)moduleName {
-    return @"MotionSensors";
 }
 
 + (BOOL)requiresMainQueueSetup {
@@ -71,7 +69,7 @@
     // Use xArbitraryCorrectedZVertical for a stable, drift-corrected heading.
     CMAttitudeReferenceFrame referenceFrame = CMAttitudeReferenceFrameXArbitraryCorrectedZVertical;
 
-    __weak typeof(self) weakSelf = self;
+    __weak __typeof(self) weakSelf = self;
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     queue.maxConcurrentOperationCount = 1;
     queue.qualityOfService = NSQualityOfServiceUserInteractive;
@@ -81,7 +79,7 @@
                                                     withHandler:^(CMDeviceMotion *motion, NSError *error) {
         if (!motion || error) return;
 
-        typeof(self) strongSelf = weakSelf;
+        __typeof(self) strongSelf = weakSelf;
         if (!strongSelf) return;
 
         // Throttle emissions to the requested interval.
@@ -118,23 +116,20 @@
 }
 
 // ---------------------------------------------------------------------------
-// NativeEventEmitter stubs (required by the JS NativeEventEmitter wrapper)
-// ---------------------------------------------------------------------------
-
-- (void)addListener:(NSString *)eventName {
-    // no-op -- event infrastructure handled by SpecBase superclass
-}
-
-- (void)removeListeners:(double)count {
-    // no-op -- event infrastructure handled by SpecBase superclass
-}
-
-// ---------------------------------------------------------------------------
-// supportedEvents (required by RCTEventEmitter for sendEventWithName)
+// RCTEventEmitter
 // ---------------------------------------------------------------------------
 
 - (NSArray<NSString *> *)supportedEvents {
     return @[@"onMotionData"];
+}
+
+// Forward TurboModule-spec listener calls to RCTEventEmitter's bookkeeping.
+- (void)addListener:(NSString *)eventName {
+    [super addListener:eventName];
+}
+
+- (void)removeListeners:(double)count {
+    [super removeListeners:count];
 }
 
 @end
